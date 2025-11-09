@@ -1,4 +1,4 @@
-// Jenkinsfile - Final Scripted Pipeline (Adjusted Command)
+// Jenkinsfile - Final Working Solution (Explicit Path & V2 Syntax)
 
 node {
     // Define environment variables
@@ -12,20 +12,16 @@ node {
     stage('Build and Deploy') {
         // Run all shell commands in one block.
         sh '''
-            # CRITICAL FIX: Set the PATH to include all common locations for Docker.
-            # This is necessary because the Jenkins shell's PATH is incomplete.
-            export PATH="/usr/bin:/usr/local/bin:/snap/bin:$PATH"
-            
             echo "--- Stopping existing containers ---"
-            # Switch to the older 'docker-compose' syntax for better PATH stability
-            docker-compose down
+            # Use the verified absolute path for the Docker binary and the V2 command
+            /usr/bin/docker compose down
 
             echo "--- Building and Deploying New Images ---"
-            docker-compose up --build -d
+            # Use the verified absolute path
+            /usr/bin/docker compose up --build -d
 
             echo "--- Verification ---"
-            # Use the simple 'docker' command for universal checking
-            docker ps
+            /usr/bin/docker ps
         '''
     }
 }
