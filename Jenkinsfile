@@ -1,4 +1,4 @@
-// Jenkinsfile - Final Working Solution (Pure Shell)
+// Jenkinsfile - Final Working Solution (V1 Syntax)
 
 node {
     def gitUrl = 'https://github.com/Hamzi0/DevOps-MERN-App.git' 
@@ -11,12 +11,13 @@ node {
     stage('Build and Deploy') {
         // Run all shell commands in one block.
         sh '''
+            # Since the host is fixed, the V1 command should now be found.
+            
             echo "--- Stopping existing containers ---"
-            # Using the official V2 syntax.
-            docker compose down
+            docker-compose down
 
             echo "--- Building and Deploying New Images ---"
-            docker compose up --build -d
+            docker-compose up --build -d
 
             echo "--- Verification ---"
             docker ps
