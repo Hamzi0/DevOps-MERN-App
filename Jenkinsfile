@@ -1,39 +1,31 @@
-// Jenkinsfile
+// Jenkinsfile - Scripted Pipeline Syntax
 
-pipeline {
-    agent any 
-    
-    // Define the environment variables
-    environment {
-        // USE YOUR ACTUAL REPOSITORY URL
-        GIT_URL = 'https://github.com/Hamzi0/DevOps-MERN-App.git' 
+node {
+    // 1. Define environment variables
+    def gitUrl = 'https://github.com/Hamzi0/DevOps-MERN-App.git' 
+    def dockerImage = 'docker/compose:latest'
+
+    stage('Checkout Code') {
+        echo 'Fetching latest code from GitHub...'
+        // Ensure you checkout the code before using it
+        git url: gitUrl, branch: 'main'
     }
-    
-    stages {
-        stage('Checkout Code') {
-            steps {
-                echo 'Fetching latest code from GitHub...'
-                // This ensures the code is locally available in the Jenkins workspace
-                git url: env.GIT_URL, branch: 'main' 
-            }
-        }
 
-        stage('Stop and Deploy') {
-            steps {
-                // CRUCIAL FIX: Wrap the docker logic in a 'script' block
-                script {
-                    docker.image('docker/compose:latest').inside {
-                        sh 'echo "Stopping existing application containers..."'
-                        sh "docker compose down" 
-                        
-                        sh 'echo "Building new images and deploying services..."'
-                        sh "docker compose up --build -d"
-                        
-                        sh 'echo "Deployment successful. Checking container status."'
-                        sh "docker ps"
-                    }
-                }
-            }
+    stage('Stop and Deploy') {
+        // 2. Use the docker.image().inside block to run the commands in the right container environment
+        docker.image(dockerImage).inside('-v /var/run/docker.sock:/var/run/docker.sock') {
+            
+            // This is the containerized environment where Docker commands work
+            
+            sh 'echo "Stopping existing application containers..."'
+            sh "docker compose down" 
+            
+            sh 'echo "Building new images and deploying services..."'
+            // Need to change directory into the workspace to find docker-compose.yml
+            sh "cd /var/jenkins_home/workspace/MERN-Deployment-Pipeline && docker compose up --build -d"
+            
+            sh 'echo "Deployment successful. Checking container status."'
+            sh "docker ps"
         }
     }
 }
