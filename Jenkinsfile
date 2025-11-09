@@ -1,4 +1,4 @@
-// Jenkinsfile - Final Guaranteed Working Script
+// Jenkinsfile - Final Scripted Pipeline (PATH Fix)
 
 node {
     // Define environment variables
@@ -12,18 +12,19 @@ node {
     stage('Build and Deploy') {
         // Run all shell commands in one block.
         sh '''
-            # CRITICAL: Use the final common path for Docker binaries on Linux/Snap systems
-            export DOCKER_CMD="/snap/bin/docker"
+            # CRITICAL FIX: Set the PATH to include all common locations for Docker.
+            # This is the necessary step to bypass the shell environment block.
+            export PATH="/usr/bin:/usr/local/bin:/snap/bin:$PATH"
             
             echo "--- Stopping existing containers ---"
-            # Execute command using the final assumed path
-            $DOCKER_CMD compose down
+            # The 'docker' command will now be found via the updated PATH
+            docker compose down
 
             echo "--- Building and Deploying New Images ---"
-            $DOCKER_CMD compose up --build -d
+            docker compose up --build -d
 
             echo "--- Verification ---"
-            $DOCKER_CMD ps
+            docker ps
         '''
     }
 }
