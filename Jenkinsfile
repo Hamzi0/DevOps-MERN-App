@@ -1,4 +1,5 @@
-// Since this is a Pipeline script, it will execute with Groovy syntax
+// Jenkinsfile - Final Scripted Pipeline (PATH Fix)
+
 node {
     // Define environment variables
     def gitUrl = 'https://github.com/Hamzi0/DevOps-MERN-App.git' 
@@ -10,17 +11,20 @@ node {
     }
 
     stage('Build and Deploy') {
-        // Run all shell commands in one block. This is the most stable method.
+        // Run all shell commands in one block for reliability.
         sh '''
+            # CRITICAL FIX: Set the PATH to include all common locations for Docker.
+            export PATH="/usr/bin:/usr/local/bin:/snap/bin:$PATH"
+            
             echo "--- Stopping existing containers ---"
-            # Use the absolute path for the Docker binary (/usr/bin/docker) to bypass PATH issues
-            /usr/bin/docker compose down
+            # Now the 'docker' command will be found via the updated PATH
+            docker compose down
 
             echo "--- Building and Deploying New Images ---"
-            /usr/bin/docker compose up --build -d
+            docker compose up --build -d
 
             echo "--- Verification ---"
-            /usr/bin/docker ps
+            docker ps
         '''
     }
 }
