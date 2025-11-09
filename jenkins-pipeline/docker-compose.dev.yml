@@ -4,7 +4,7 @@ services:
     build:
       context: ..
       dockerfile: jenkins-pipeline/Dockerfile.frontend
-    container_name: dev-frontend-container
+    container_name: dev-frontend-2   # <- unique name
     ports:
       - "3004:80"
 
@@ -12,17 +12,17 @@ services:
     build:
       context: ..
       dockerfile: jenkins-pipeline/Dockerfile.backend
-    container_name: dev-backend-container
+    container_name: dev-backend-2    # <- unique name
     ports:
       - "5004:5003"
 
   mongo:
     image: mongo:latest
-    container_name: dev-mongo-container
+    container_name: dev-mongo-2      # <- unique name
     ports:
       - "27018:27017"
     volumes:
-      - dev-mongo-data:/data/db
+      - dev-mongo-data-2:/data/db
 
 volumes:
-  dev-mongo-data:
+  dev-mongo-data-2:
