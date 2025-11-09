@@ -9,11 +9,9 @@ node {
     }
 
     stage('Build and Deploy') {
-        // Run all shell commands in one block.
         sh '''
-            # Since the host is fixed, the V1 command should now be found.
-            
             echo "--- Stopping existing containers ---"
+            # Now that the host is fixed, this command will run successfully
             docker-compose down
 
             echo "--- Building and Deploying New Images ---"
