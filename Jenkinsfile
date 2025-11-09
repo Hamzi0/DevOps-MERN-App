@@ -1,4 +1,4 @@
-// Jenkinsfile - Final Working Solution (Explicit Path & V2 Syntax)
+// Jenkinsfile - The Final Working Script
 
 node {
     // Define environment variables
@@ -12,16 +12,18 @@ node {
     stage('Build and Deploy') {
         // Run all shell commands in one block.
         sh '''
+            # CRITICAL FIX: Explicitly setting the path to /usr/local/bin/docker
+            DOCKER_CMD="/usr/local/bin/docker"
+            
             echo "--- Stopping existing containers ---"
-            # Use the verified absolute path for the Docker binary and the V2 command
-            /usr/bin/docker compose down
+            # Use the defined variable for execution
+            $DOCKER_CMD compose down
 
             echo "--- Building and Deploying New Images ---"
-            # Use the verified absolute path
-            /usr/bin/docker compose up --build -d
+            $DOCKER_CMD compose up --build -d
 
             echo "--- Verification ---"
-            /usr/bin/docker ps
+            $DOCKER_CMD ps
         '''
     }
 }
