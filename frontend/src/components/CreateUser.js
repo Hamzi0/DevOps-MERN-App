@@ -54,7 +54,7 @@ function CreateUser() {
                             <Form.Label>Email:</Form.Label>
                             <Form.Control 
                                 type="email"
-                                placeholder="Enter email address"
+                                placeholder="Enter email"
                                 required
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
