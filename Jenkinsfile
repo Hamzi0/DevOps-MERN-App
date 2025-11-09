@@ -1,28 +1,33 @@
-// Jenkinsfile - Final Scripted Pipeline (Full Path Fix)
+pipeline {
+    agent any // Runs the job on a Jenkins executor node
 
-node {
-    // Define environment variables
-    def gitUrl = 'https://github.com/Hamzi0/DevOps-MERN-App.git' 
-    
-    stage('Checkout Code') {
-        echo 'Fetching latest code from GitHub...'
-        // Fetches code into the workspace
-        git url: gitUrl, branch: 'main'
-    }
+    stages {
+        // Stage 1: Checkout Code
+        // NOTE: This stage is usually handled automatically by Jenkins if the job is configured as "Pipeline script from SCM"
+        stage('Checkout') {
+            steps {
+                echo "Cloning repository from GitHub"
+                // The correct way to checkout code using Jenkins Pipeline steps
+                checkout scm 
+            }
+        }
 
-    stage('Build and Deploy') {
-        // Run all commands in a single shell block for maximum compatibility.
-        sh '''
-            echo "--- Stopping existing containers ---"
-            # Use the full path for the Docker binary to bypass the PATH issue.
-            /usr/bin/docker compose down
+        // Stage 2: Build and Start Deployment
+        stage('Deploy Application') {
+            steps {
+                // The 'sh' commands execute within the current workspace directory.
+                sh '''
+                    echo "Stopping old services..."
+                    /usr/bin/docker compose down 
 
-            echo "--- Building and Deploying New Images ---"
-            # Build and deploy the entire stack using the new code
-            /usr/bin/docker compose up --build -d
+                    echo "Building and starting new containers..."
+                    // CRITICAL: --build ensures the new code is compiled into fresh images.
+                    /usr/bin/docker compose up --build -d
 
-            echo "--- Verification ---"
-            /usr/bin/docker ps
-        '''
+                    echo "Deployment Complete. Verifying containers..."
+                    /usr/bin/docker ps
+                '''
+            }
+        }
     }
 }
