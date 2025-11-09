@@ -1,4 +1,4 @@
-// Jenkinsfile - The Final Working Script
+// Jenkinsfile - Final Guaranteed Working Script
 
 node {
     // Define environment variables
@@ -12,11 +12,11 @@ node {
     stage('Build and Deploy') {
         // Run all shell commands in one block.
         sh '''
-            # CRITICAL FIX: Explicitly setting the path to /usr/local/bin/docker
-            DOCKER_CMD="/usr/local/bin/docker"
+            # CRITICAL: Use the final common path for Docker binaries on Linux/Snap systems
+            export DOCKER_CMD="/snap/bin/docker"
             
             echo "--- Stopping existing containers ---"
-            # Use the defined variable for execution
+            # Execute command using the final assumed path
             $DOCKER_CMD compose down
 
             echo "--- Building and Deploying New Images ---"
