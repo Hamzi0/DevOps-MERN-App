@@ -1,4 +1,4 @@
-// Jenkinsfile - Final Working Solution (V1 Syntax)
+// Jenkinsfile - The Guaranteed Final Solution
 
 node {
     def gitUrl = 'https://github.com/Hamzi0/DevOps-MERN-App.git' 
@@ -11,7 +11,7 @@ node {
     stage('Build and Deploy') {
         sh '''
             echo "--- Stopping existing containers ---"
-            # Now that the host is fixed, this command will run successfully
+            # Use the fixed, V1 command name, which is now a working symlink
             docker-compose down
 
             echo "--- Building and Deploying New Images ---"
