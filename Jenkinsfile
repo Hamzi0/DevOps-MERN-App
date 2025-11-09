@@ -1,4 +1,4 @@
-// Jenkinsfile - Final Scripted Pipeline (PATH Fix)
+// Jenkinsfile - The Absolute Final Fix
 
 node {
     // Define environment variables
@@ -10,18 +10,20 @@ node {
     }
 
     stage('Build and Deploy') {
-        // Run all shell commands in one block.
         sh '''
-            # CRITICAL FIX: Set the PATH to include all common locations for Docker.
-            # This is the necessary step to bypass the shell environment block.
+            # CRITICAL FIX 1: Set the PATH variable.
             export PATH="/usr/bin:/usr/local/bin:/snap/bin:$PATH"
             
+            # CRITICAL FIX 2: Create an alias for the V2 command using the V1 executable name.
+            # This fixes the shell execution context problem.
+            alias docker-compose='docker compose'
+            
             echo "--- Stopping existing containers ---"
-            # The 'docker' command will now be found via the updated PATH
-            docker compose down
+            # Use the alias (which is now the correct command)
+            docker-compose down
 
             echo "--- Building and Deploying New Images ---"
-            docker compose up --build -d
+            docker-compose up --build -d
 
             echo "--- Verification ---"
             docker ps
