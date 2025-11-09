@@ -1,14 +1,9 @@
-# Stage 1: Build frontend
+# Stage 1: Build React app
 FROM node:20-alpine AS build
 WORKDIR /app
-
-# Detect if frontend folder exists
-COPY frontend/package*.json ./ || COPY package*.json ./ 
+COPY package*.json ./
 RUN npm install
-
-# Copy source code depending on structure
-COPY frontend/ ./ || COPY ./ ./
-
+COPY . .
 RUN npm run build
 
 # Stage 2: Serve with Nginx

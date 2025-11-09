@@ -1,13 +1,14 @@
-# Stage 1: Build backend
+# Stage 1: Build
 FROM node:20-alpine AS build
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
-COPY . ./
+COPY . .
+# No build step needed for pure Node backend (if needed, add build commands)
 
-# Stage 2: Production image
+# Stage 2: Runtime
 FROM node:20-alpine
 WORKDIR /app
-COPY --from=build /app ./
+COPY --from=build /app .
 EXPOSE 5003
 CMD ["npm", "start"]
