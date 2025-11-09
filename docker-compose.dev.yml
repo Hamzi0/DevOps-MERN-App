@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: dev-backend-container
+    ports:
+      - "5004:5003"     # different host port
+    depends_on:
+      - mongo
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: dev-frontend-container
+    ports:
+      - "3004:80"       # different host port
+
+  mongo:
+    image: mongo:latest
+    container_name: dev-mongo-container
+    ports:
+      - "27018:27017"   # different host port
+    volumes:
+      - dev-mongo-data:/data/db
+
+volumes:
+  dev-mongo-data:
