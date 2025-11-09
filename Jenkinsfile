@@ -1,23 +1,29 @@
-// Jenkinsfile - Fixed and Future-Proof Version
+pipeline {
+  agent any
 
-node {
-    def gitUrl = 'https://github.com/Hamzi0/DevOps-MERN-App.git'
-    
+  stages {
     stage('Checkout Code') {
-        echo 'Fetching latest code from GitHub...'
-        git url: gitUrl, branch: 'main'
+      steps {
+        deleteDir()
+        git branch: 'main', url: 'https://github.com/Hamzi0/DevOps-MERN-App.git'
+      }
     }
 
     stage('Build and Deploy') {
-        sh '''
+      steps {
+        script {
+          docker.withServer('unix:///var/run/docker.sock') {
             echo "--- Stopping existing containers ---"
-            docker compose down
+            sh 'docker compose down'
 
             echo "--- Building and Deploying New Images ---"
-            docker compose up --build -d
+            sh 'docker compose up --build -d'
 
             echo "--- Verification ---"
-            docker ps
-        '''
+            sh 'docker ps'
+          }
+        }
+      }
     }
+  }
 }
