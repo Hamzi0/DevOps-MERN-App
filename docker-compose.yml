@@ -1,55 +1,34 @@
-version: '3.8'
-services:
+version: "3.9"
 
-  mongodb:
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: dev-app-backend
+    ports:
+      - "5003:5003"
+    networks:
+      - devapp-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: dev-app-frontend
+    ports:
+      - "3003:80"
+    networks:
+      - devapp-network
+
+  mongo:
     image: mongo:latest
     container_name: mongo-db-container
-    restart: always
-    environment:
-      # Credentials for connection from the backend container
-      MONGO_INITDB_ROOT_USERNAME: user
-      MONGO_INITDB_ROOT_PASSWORD: pass
     ports:
-      # Expose only if needed for external debugging tools
       - "27017:27017"
-    volumes:
-      # Attach a named volume for persistent data storage (Assignment Requirement)
-      - mongo-data:/data/db
+    networks:
+      - devapp-network
 
-  # 2. Backend Service (Node.js API)
-  backend:
-    # Build context points to your backend directory and Dockerfile
-    build:
-      context: ./backend
-      dockerfile: Dockerfile.backend
-    container_name: mern-backend-container
-    ports:
-      # Map container port 5003 to host port 5003
-      - "5003:5003" 
-    environment:
-      # Crucial: MONGODB_URI points to the MongoDB service name ('mongodb') inside the Docker network.
-      MONGODB_URI: "mongodb://user:pass@mongodb:27017/user_directory_db?authSource=admin"
-      PORT: 5003
-    depends_on:
-      - mongodb # Ensure MongoDB starts before the backend
-
-  # 3. Frontend Service (React/Nginx)
-  frontend:
-    # Build context points to your frontend directory and Dockerfile
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.frontend
-    container_name: mern-frontend-container
-    ports:
-      # Map Nginx container port 80 to host port 3003
-      - "3003:80"
-    environment:
-      # CRITICAL FIX: Tells the React app where to find the API, using the internal Docker service name.
-      - REACT_APP_API_URL=http://backend:5003 
-    depends_on:
-      - backend
-
-# Define the persistent volume(s)
-volumes:
-  mongo-data:
-    driver: local
+networks:
+  devapp-network:
+    driver: bridge
